@@ -2,6 +2,7 @@ package org.learning.tdd.service;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.learning.tdd.exception.NotFoundException;
 import org.learning.tdd.model.Customer;
 import org.learning.tdd.repository.CustomerRepository;
 import org.mockito.InjectMocks;
@@ -11,8 +12,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyString;
 
 @ExtendWith(MockitoExtension.class)
 class CustomerServiceTest {
@@ -26,7 +30,24 @@ class CustomerServiceTest {
     void getAllCustomers() {
         Mockito.doReturn(getMockCustomers(2)).when(customerRepository).findAll();
         List<Customer> customers = customerService.getAllCustomers();
-        assertEquals(2, customers.size());
+        assertThat(customers.size()).isEqualTo(2);
+    }
+
+    @Test
+    void getCustomer() {
+        Mockito.doReturn(getMockCustomer()).when(customerRepository).findByEmailAddress("email");
+
+        Customer customer = customerService.getCustomer("email");
+        assertThat(customer.getFirstName()).isEqualTo("depan");
+        assertThat(customer.getLastName()).isEqualTo("belakang");
+    }
+
+    @Test
+    void getCustomer_NotFound() {
+        Mockito.doReturn(Optional.empty()).when(customerRepository).findByEmailAddress(anyString());
+
+        Exception e = assertThrows(NotFoundException.class, () -> customerService.getCustomer("hehe@hihi.com"));
+        assertThat(e.getMessage()).isEqualTo("no user found with email hehe@hihi.com");
     }
 
     private List<Customer> getMockCustomers(int size) {
@@ -39,5 +60,11 @@ class CustomerServiceTest {
         return customers;
     }
 
+    private Optional<Customer> getMockCustomer() {
+        Customer customer = new Customer();
+        customer.setFirstName("depan");
+        customer.setLastName("belakang");
 
+        return Optional.of(customer);
+    }
 }
