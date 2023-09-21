@@ -7,7 +7,6 @@ import org.learning.tdd.repository.CustomerRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -19,11 +18,6 @@ public class CustomerService {
     }
 
     public Customer getCustomer(String email) {
-        Optional<Customer> customerOptional = customerRepository.findByEmailAddress(email);
-        if (customerOptional.isPresent()) {
-            return customerOptional.get();
-        }
-
-        throw new NotFoundException(email);
+        return customerRepository.findByEmailAddress(email).orElseThrow(() -> new NotFoundException(email));
     }
 }
