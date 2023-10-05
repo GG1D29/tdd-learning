@@ -3,6 +3,7 @@ package org.learning.tdd.controller;
 import lombok.AllArgsConstructor;
 import org.learning.tdd.model.Customer;
 import org.learning.tdd.service.CustomerService;
+import org.learning.tdd.service.CustomerServiceImpl;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;

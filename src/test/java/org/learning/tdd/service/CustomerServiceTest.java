@@ -20,7 +20,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 @ExtendWith(MockitoExtension.class)
 class CustomerServiceTest {
     @InjectMocks
-    CustomerService customerService;
+    CustomerServiceImpl customerService;
 
     @Mock
     CustomerRepository customerRepository;
