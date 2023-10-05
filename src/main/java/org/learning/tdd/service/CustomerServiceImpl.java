@@ -5,6 +5,7 @@ import org.learning.tdd.dto.CustomerDto;
 import org.learning.tdd.exception.NotFoundException;
 import org.learning.tdd.model.Customer;
 import org.learning.tdd.repository.CustomerRepository;
+import org.learning.tdd.util.StringUtil;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,7 +26,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     public void addCustomer(CustomerDto dto) {
-        Customer customer = new Customer(null, dto.getFirstName(), dto.getLastName(), dto.getEmailAddress(), dto.getPhoneNumber(), dto.getAddress());
+        Customer customer = new Customer(StringUtil.createNewID(), dto.getFirstName(), dto.getLastName(), dto.getEmailAddress(), dto.getPhoneNumber(), dto.getAddress());
         customerRepository.save(customer);
     }
 }

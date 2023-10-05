@@ -37,4 +37,9 @@ public class CustomerServiceIT {
         Exception e = assertThrows(NotFoundException.class, () -> customerService.getCustomer("someone@lectusa.com"));
         assertThat(e.getMessage()).isEqualTo("no user found with email someone@lectusa.com");
     }
+
+    @Test
+    void addCustomer() {
+
+    }
 }

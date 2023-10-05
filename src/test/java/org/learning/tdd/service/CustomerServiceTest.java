@@ -77,6 +77,7 @@ class CustomerServiceTest {
 
         Mockito.verify(customerRepository).save(customerArgumentCaptor.capture());
         Customer capturedCustomer = customerArgumentCaptor.getValue();
+        assertThat(capturedCustomer.getCustomerId()).isNotNull();
         assertThat(capturedCustomer.getFirstName()).isEqualTo("stanley");
         assertThat(capturedCustomer.getLastName()).isEqualTo("xie");
         assertThat(capturedCustomer.getEmailAddress()).isEqualTo("email");
