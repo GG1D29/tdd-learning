@@ -2,12 +2,11 @@ package org.learning.tdd.service;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.learning.tdd.dto.CustomerDto;
 import org.learning.tdd.exception.NotFoundException;
 import org.learning.tdd.model.Customer;
 import org.learning.tdd.repository.CustomerRepository;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
@@ -25,6 +24,9 @@ class CustomerServiceTest {
 
     @Mock
     CustomerRepository customerRepository;
+
+    @Captor
+    ArgumentCaptor<Customer> customerArgumentCaptor;
 
     @Test
     void getAllCustomers() {
@@ -66,5 +68,20 @@ class CustomerServiceTest {
         customer.setLastName("belakang");
 
         return Optional.of(customer);
+    }
+
+    @Test
+    void createNewCustomer() {
+        CustomerDto dto = new CustomerDto("stanley", "xie", "email", "phone", "address");
+        customerService.addCustomer(dto);
+
+        Mockito.verify(customerRepository).save(customerArgumentCaptor.capture());
+        Customer capturedCustomer = customerArgumentCaptor.getValue();
+        assertThat(capturedCustomer.getFirstName()).isEqualTo("stanley");
+        assertThat(capturedCustomer.getLastName()).isEqualTo("xie");
+        assertThat(capturedCustomer.getEmailAddress()).isEqualTo("email");
+        assertThat(capturedCustomer.getPhoneNumber()).isEqualTo("phone");
+        assertThat(capturedCustomer.getAddress()).isEqualTo("address");
+
     }
 }

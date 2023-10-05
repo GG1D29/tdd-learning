@@ -1,6 +1,8 @@
 package org.learning.tdd.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,6 +13,8 @@ import java.util.UUID;
 @Entity
 @Table(name = "customers")
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Customer {
 
     @Id
