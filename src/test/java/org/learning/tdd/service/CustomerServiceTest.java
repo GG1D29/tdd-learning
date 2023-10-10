@@ -3,6 +3,7 @@ package org.learning.tdd.service;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.learning.tdd.dto.CustomerDto;
+import org.learning.tdd.exception.DuplicateUserException;
 import org.learning.tdd.exception.NotFoundException;
 import org.learning.tdd.model.Customer;
 import org.learning.tdd.repository.CustomerRepository;
@@ -72,7 +73,7 @@ class CustomerServiceTest {
 
     @Test
     void createNewCustomer() {
-        CustomerDto dto = new CustomerDto("stanley", "xie", "email", "phone", "address");
+        CustomerDto dto = getCreateCustomerDto();
         customerService.addCustomer(dto);
 
         Mockito.verify(customerRepository).save(customerArgumentCaptor.capture());
@@ -80,9 +81,22 @@ class CustomerServiceTest {
         assertThat(capturedCustomer.getCustomerId()).isNotNull();
         assertThat(capturedCustomer.getFirstName()).isEqualTo("stanley");
         assertThat(capturedCustomer.getLastName()).isEqualTo("xie");
-        assertThat(capturedCustomer.getEmailAddress()).isEqualTo("email");
+        assertThat(capturedCustomer.getEmailAddress()).isEqualTo("me@myemail.com");
         assertThat(capturedCustomer.getPhoneNumber()).isEqualTo("phone");
         assertThat(capturedCustomer.getAddress()).isEqualTo("address");
 
+    }
+
+    @Test
+    void createNewCustomer_Duplicate() {
+        Mockito.doReturn(getMockCustomer()).when(customerRepository).findByEmailAddress(anyString());
+
+        CustomerDto dto = getCreateCustomerDto();
+        Exception e = assertThrows(DuplicateUserException.class, () -> customerService.addCustomer(dto));
+        assertThat(e.getMessage()).isEqualTo("user is already exist with email me@myemail.com");
+    }
+
+    private CustomerDto getCreateCustomerDto() {
+        return new CustomerDto("stanley", "xie", "me@myemail.com", "phone", "address");
     }
 }
