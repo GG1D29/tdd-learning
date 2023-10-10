@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -27,7 +28,8 @@ public class CustomerServiceImpl implements CustomerService {
         return customerRepository.findByEmailAddress(email).orElseThrow(() -> new NotFoundException(email));
     }
 
-    public void addCustomer(CustomerDto dto) {
+    @Override
+    public UUID addCustomer(CustomerDto dto) {
         Optional<Customer> customerOptional = customerRepository.findByEmailAddress(dto.getEmailAddress());
         if (customerOptional.isPresent()) {
             throw new DuplicateUserException(dto.getEmailAddress());
@@ -35,6 +37,8 @@ public class CustomerServiceImpl implements CustomerService {
 
         Customer customer = new Customer(StringUtil.createNewID(), dto.getFirstName(), dto.getLastName(), dto.getEmailAddress(), dto.getPhoneNumber(), dto.getAddress());
         customerRepository.save(customer);
+
+        return customer.getCustomerId();
     }
 
 

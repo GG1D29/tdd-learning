@@ -96,7 +96,7 @@ class CustomerServiceTest {
         assertThat(e.getMessage()).isEqualTo("user is already exist with email me@myemail.com");
     }
 
-    private CustomerDto getCreateCustomerDto() {
+    static CustomerDto getCreateCustomerDto() {
         return new CustomerDto("stanley", "xie", "me@myemail.com", "phone", "address");
     }
 }
