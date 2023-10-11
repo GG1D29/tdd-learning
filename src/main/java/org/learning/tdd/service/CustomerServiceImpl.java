@@ -42,4 +42,8 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
 
+    public void updateCustomer(CustomerDto dto, String customerId) {
+        Customer customer = new Customer(UUID.fromString(customerId), dto.getFirstName(), dto.getLastName(), dto.getEmailAddress(), dto.getPhoneNumber(), dto.getAddress());
+        customerRepository.save(customer);
+    }
 }

@@ -13,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -98,5 +99,25 @@ class CustomerServiceTest {
 
     static CustomerDto getCreateCustomerDto() {
         return new CustomerDto("stanley", "xie", "me@myemail.com", "phone", "address");
+    }
+
+    @Test
+    void updateCustomer() {
+        CustomerDto dto = getUpdateCustomerDto();
+        customerService.updateCustomer(dto, "054b145c-ddbc-4136-a2bd-7bf45ed1bef7");
+
+        Mockito.verify(customerRepository).save(customerArgumentCaptor.capture());
+        Customer capturedCustomer = customerArgumentCaptor.getValue();
+        UUID uuid = UUID.fromString("054b145c-ddbc-4136-a2bd-7bf45ed1bef7");
+        assertThat(capturedCustomer.getCustomerId()).isEqualTo(uuid);
+        assertThat(capturedCustomer.getFirstName()).isEqualTo("stanley1");
+        assertThat(capturedCustomer.getLastName()).isEqualTo("xie1");
+        assertThat(capturedCustomer.getEmailAddress()).isEqualTo("new_me@myemail.com");
+        assertThat(capturedCustomer.getPhoneNumber()).isEqualTo("phone1");
+        assertThat(capturedCustomer.getAddress()).isEqualTo("address1");
+    }
+
+    static CustomerDto getUpdateCustomerDto() {
+        return new CustomerDto("stanley1", "xie1", "new_me@myemail.com", "phone1", "address1");
     }
 }
