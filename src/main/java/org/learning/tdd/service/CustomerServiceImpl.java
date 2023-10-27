@@ -25,6 +25,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Customer getCustomer(String email) {
+        //TODO get customer use UUID instead
         return customerRepository.findByEmailAddress(email).orElseThrow(() -> new NotFoundException(email));
     }
 
@@ -42,6 +43,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
 
+    @Override
     public void updateCustomer(CustomerDto dto, String customerId) {
         Customer customer = new Customer(UUID.fromString(customerId), dto.getFirstName(), dto.getLastName(), dto.getEmailAddress(), dto.getPhoneNumber(), dto.getAddress());
         customerRepository.save(customer);

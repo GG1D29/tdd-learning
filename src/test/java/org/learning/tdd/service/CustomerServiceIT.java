@@ -16,6 +16,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.learning.tdd.service.CustomerServiceTest.getCreateCustomerDto;
+import static org.learning.tdd.service.CustomerServiceTest.getUpdateCustomerDto;
 import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 
 @SpringBootTest
@@ -64,4 +65,18 @@ public class CustomerServiceIT {
         assertThat(e.getMessage()).isEqualTo("user is already exist with email me@myemail.com");
 
     }
+
+    @Test
+    void updateCustomer() {
+        CustomerDto dto = getUpdateCustomerDto();
+        customerService.updateCustomer(dto, "9ac775c3-a1d3-4a0e-a2df-3e4ee8b3a49a");
+
+        // find by old email
+        assertThrows(NotFoundException.class, () -> customerService.getCustomer("nibh@ultricesposuere.edu"));
+
+        Customer updatedCustomer = customerService.getCustomer("new_me@myemail.com");
+        assertThat(updatedCustomer.getFirstName()).isEqualTo(dto.getFirstName());
+        assertThat(updatedCustomer.getFirstName()).isEqualTo(dto.getFirstName());
+    }
+
 }

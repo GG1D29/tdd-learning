@@ -13,4 +13,6 @@ public interface CustomerService {
     Customer getCustomer(String email);
 
     UUID addCustomer(CustomerDto dto);
+
+    void updateCustomer(CustomerDto dto, String customerId);
 }
