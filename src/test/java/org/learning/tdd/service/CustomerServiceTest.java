@@ -162,11 +162,7 @@ class CustomerServiceTest {
 
     @Test
     void deleteCustomer_InvalidID() {
-        customerService.deleteCustomer("054b145c-ddbc-4136-a2bd-7bf45ed1bef7");
-
-        Mockito.verify(customerRepository).deleteById(uuidArgumentCaptor.capture());
-        UUID capturedCustomer = uuidArgumentCaptor.getValue();
-        UUID uuid = UUID.fromString("054b145c-ddbc-4136-a2bd-7bf45ed1bef7");
-        assertThat(capturedCustomer).isEqualTo(uuid);
+        Exception e = assertThrows(BadRequestException.class, () -> customerService.deleteCustomer("054b145c-ddbc-4136-a2bd"));
+        assertThat(e.getMessage()).isEqualTo("cannot convert string to uuid: 054b145c-ddbc-4136-a2bd");
     }
 }

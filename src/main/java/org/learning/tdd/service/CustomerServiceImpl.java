@@ -52,7 +52,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public void deleteCustomer(String customerId) {
-        //TODO handle when String customerId is not correct UUID
-        customerRepository.deleteById(UUID.fromString(customerId));
+        UUID uuid = StringUtil.convertToUUID(customerId);
+        customerRepository.deleteById(uuid);
     }
 }
