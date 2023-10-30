@@ -1,5 +1,7 @@
 package org.learning.tdd.util;
 
+import org.learning.tdd.exception.BadRequestException;
+
 import java.util.UUID;
 
 public class StringUtil {
@@ -8,6 +10,10 @@ public class StringUtil {
     }
 
     public static UUID fromString(String id) {
-        return UUID.fromString(id);
+        try {
+            return UUID.fromString(id);
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException("invalid uuid");
+        }
     }
 }
