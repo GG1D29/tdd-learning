@@ -45,7 +45,8 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public void updateCustomer(CustomerDto dto, String customerId) {
-        Customer customer = new Customer(UUID.fromString(customerId), dto.getFirstName(), dto.getLastName(), dto.getEmailAddress(), dto.getPhoneNumber(), dto.getAddress());
+        UUID uuid = StringUtil.convertToUUID(customerId);
+        Customer customer = new Customer(uuid, dto.getFirstName(), dto.getLastName(), dto.getEmailAddress(), dto.getPhoneNumber(), dto.getAddress());
         customerRepository.save(customer);
     }
 

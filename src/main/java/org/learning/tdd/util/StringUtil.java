@@ -13,7 +13,7 @@ public class StringUtil {
         try {
             return UUID.fromString(id);
         } catch (IllegalArgumentException e) {
-            throw new BadRequestException("invalid id");
+            throw new BadRequestException("cannot convert string to uuid: " + id);
         }
     }
 }

@@ -63,7 +63,7 @@ class CustomerServiceTest {
     @Test
     void getCustomer_InvalidCustomerId() {
         Exception e = assertThrows(BadRequestException.class, () -> customerService.getCustomer("123"));
-        assertThat(e.getMessage()).isEqualTo("invalid id");
+        assertThat(e.getMessage()).isEqualTo("cannot convert string to uuid: 123");
     }
 
     private List<Customer> getMockCustomers(int size) {
@@ -139,12 +139,29 @@ class CustomerServiceTest {
         assertThat(capturedCustomer.getAddress()).isEqualTo("address1");
     }
 
+    @Test
+    void updateCustomer_InvalidCustomerID() {
+        CustomerDto dto = getUpdateCustomerDto();
+        Exception e = assertThrows(BadRequestException.class, () -> customerService.updateCustomer(dto, "054b145c-ddbc-4136-a2bd"));
+        assertThat(e.getMessage()).isEqualTo("cannot convert string to uuid: 054b145c-ddbc-4136-a2bd");
+    }
+
     static CustomerDto getUpdateCustomerDto() {
         return new CustomerDto("stanley1", "xie1", "new_me@myemail.com", "phone1", "address1");
     }
 
     @Test
     void deleteCustomer() {
+        customerService.deleteCustomer("054b145c-ddbc-4136-a2bd-7bf45ed1bef7");
+
+        Mockito.verify(customerRepository).deleteById(uuidArgumentCaptor.capture());
+        UUID capturedCustomer = uuidArgumentCaptor.getValue();
+        UUID uuid = UUID.fromString("054b145c-ddbc-4136-a2bd-7bf45ed1bef7");
+        assertThat(capturedCustomer).isEqualTo(uuid);
+    }
+
+    @Test
+    void deleteCustomer_InvalidID() {
         customerService.deleteCustomer("054b145c-ddbc-4136-a2bd-7bf45ed1bef7");
 
         Mockito.verify(customerRepository).deleteById(uuidArgumentCaptor.capture());

@@ -26,6 +26,6 @@ class StringUtilTest {
     @Test
     void createUUID_invalidString() {
         Exception e = assertThrows(BadRequestException.class, () -> StringUtil.convertToUUID("054b145c-ddbc-4136-a2bd"));
-        assertThat(e.getMessage()).isEqualTo("invalid id");
+         assertThat(e.getMessage()).isEqualTo("cannot convert string to uuid: 054b145c-ddbc-4136-a2bd");
     }
 }
