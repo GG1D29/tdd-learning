@@ -48,4 +48,10 @@ public class CustomerServiceImpl implements CustomerService {
         Customer customer = new Customer(UUID.fromString(customerId), dto.getFirstName(), dto.getLastName(), dto.getEmailAddress(), dto.getPhoneNumber(), dto.getAddress());
         customerRepository.save(customer);
     }
+
+    @Override
+    public void deleteCustomer(String customerId) {
+        //TODO handle when String customerId is not correct UUID
+        customerRepository.deleteById(UUID.fromString(customerId));
+    }
 }

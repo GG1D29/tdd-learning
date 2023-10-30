@@ -30,6 +30,9 @@ class CustomerServiceTest {
     @Captor
     ArgumentCaptor<Customer> customerArgumentCaptor;
 
+    @Captor
+    ArgumentCaptor<UUID> uuidArgumentCaptor;
+
     @Test
     void getAllCustomers() {
         Mockito.doReturn(getMockCustomers(2)).when(customerRepository).findAll();
@@ -119,5 +122,15 @@ class CustomerServiceTest {
 
     static CustomerDto getUpdateCustomerDto() {
         return new CustomerDto("stanley1", "xie1", "new_me@myemail.com", "phone1", "address1");
+    }
+
+    @Test
+    void deleteCustomer() {
+        customerService.deleteCustomer("054b145c-ddbc-4136-a2bd-7bf45ed1bef7");
+
+        Mockito.verify(customerRepository).deleteById(uuidArgumentCaptor.capture());
+        UUID capturedCustomer = uuidArgumentCaptor.getValue();
+        UUID uuid = UUID.fromString("054b145c-ddbc-4136-a2bd-7bf45ed1bef7");
+        assertThat(capturedCustomer).isEqualTo(uuid);
     }
 }

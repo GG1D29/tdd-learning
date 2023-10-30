@@ -15,4 +15,6 @@ public interface CustomerService {
     UUID addCustomer(CustomerDto dto);
 
     void updateCustomer(CustomerDto dto, String customerId);
+
+    void deleteCustomer(String customerId);
 }
