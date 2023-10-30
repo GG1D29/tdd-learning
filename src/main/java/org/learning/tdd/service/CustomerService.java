@@ -10,7 +10,7 @@ public interface CustomerService {
 
     List<Customer> getAllCustomers();
 
-    Customer getCustomer(String email);
+    Customer getCustomer(String customerId);
 
     UUID addCustomer(CustomerDto dto);
 

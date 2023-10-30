@@ -3,7 +3,7 @@ package org.learning.tdd.service;
 import lombok.AllArgsConstructor;
 import org.learning.tdd.dto.CustomerDto;
 import org.learning.tdd.exception.DuplicateUserException;
-import org.learning.tdd.exception.NotFoundException;
+import org.learning.tdd.exception.UserNotFoundException;
 import org.learning.tdd.model.Customer;
 import org.learning.tdd.repository.CustomerRepository;
 import org.learning.tdd.util.StringUtil;
@@ -24,9 +24,9 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Customer getCustomer(String email) {
-        //TODO get customer use UUID instead
-        return customerRepository.findByEmailAddress(email).orElseThrow(() -> new NotFoundException(email));
+    public Customer getCustomer(String customerId) {
+        UUID uuid = StringUtil.convertToUUID(customerId);
+        return customerRepository.findById(uuid).orElseThrow(() -> new UserNotFoundException(customerId));
     }
 
     @Override

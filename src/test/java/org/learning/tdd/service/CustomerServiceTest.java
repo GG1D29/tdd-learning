@@ -3,8 +3,9 @@ package org.learning.tdd.service;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.learning.tdd.dto.CustomerDto;
+import org.learning.tdd.exception.BadRequestException;
 import org.learning.tdd.exception.DuplicateUserException;
-import org.learning.tdd.exception.NotFoundException;
+import org.learning.tdd.exception.UserNotFoundException;
 import org.learning.tdd.model.Customer;
 import org.learning.tdd.repository.CustomerRepository;
 import org.mockito.*;
@@ -17,6 +18,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 
 @ExtendWith(MockitoExtension.class)
@@ -42,19 +44,26 @@ class CustomerServiceTest {
 
     @Test
     void getCustomer() {
-        Mockito.doReturn(getMockCustomer()).when(customerRepository).findByEmailAddress("email");
+        Customer mockCustomer = getMockCustomer1();
+        Mockito.doReturn(Optional.of(mockCustomer)).when(customerRepository).findById(mockCustomer.getCustomerId());
 
-        Customer customer = customerService.getCustomer("email");
+        Customer customer = customerService.getCustomer("054b145c-ddbc-4136-a2bd-7bf45ed1bef7");
         assertThat(customer.getFirstName()).isEqualTo("depan");
         assertThat(customer.getLastName()).isEqualTo("belakang");
     }
 
     @Test
     void getCustomer_NotFound() {
-        Mockito.doReturn(Optional.empty()).when(customerRepository).findByEmailAddress(anyString());
+        Mockito.doReturn(Optional.empty()).when(customerRepository).findById(any(UUID.class));
 
-        Exception e = assertThrows(NotFoundException.class, () -> customerService.getCustomer("hehe@hihi.com"));
-        assertThat(e.getMessage()).isEqualTo("no user found with email hehe@hihi.com");
+        Exception e = assertThrows(UserNotFoundException.class, () -> customerService.getCustomer("054b145c-ddbc-4136-a2bd-7bf45ed1bef7"));
+        assertThat(e.getMessage()).isEqualTo("user not found with id: 054b145c-ddbc-4136-a2bd-7bf45ed1bef7");
+    }
+
+    @Test
+    void getCustomer_InvalidCustomerId() {
+        Exception e = assertThrows(BadRequestException.class, () -> customerService.getCustomer("123"));
+        assertThat(e.getMessage()).isEqualTo("invalid id");
     }
 
     private List<Customer> getMockCustomers(int size) {
@@ -73,6 +82,16 @@ class CustomerServiceTest {
         customer.setLastName("belakang");
 
         return Optional.of(customer);
+    }
+
+    private Customer getMockCustomer1() {
+        Customer customer = new Customer();
+        UUID uuid = UUID.fromString("054b145c-ddbc-4136-a2bd-7bf45ed1bef7");
+        customer.setCustomerId(uuid);
+        customer.setFirstName("depan");
+        customer.setLastName("belakang");
+
+        return customer;
     }
 
     @Test

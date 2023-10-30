@@ -7,9 +7,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(HttpStatus.NOT_FOUND)
 @AllArgsConstructor
 public class UserNotFoundException extends RuntimeException {
-    //TODO not needed?
+    private String id;
+
     @Override
     public String getMessage() {
-        return "user not found";
+        return "user not found with id: " + id;
     }
 }

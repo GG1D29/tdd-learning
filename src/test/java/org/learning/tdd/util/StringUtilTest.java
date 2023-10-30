@@ -18,14 +18,14 @@ class StringUtilTest {
 
     @Test
     void createUUID_fromString() {
-        UUID uuid = StringUtil.fromString("054b145c-ddbc-4136-a2bd-7bf45ed1bef7");
+        UUID uuid = StringUtil.convertToUUID("054b145c-ddbc-4136-a2bd-7bf45ed1bef7");
         assertThat(uuid).isNotNull();
         assertThat(uuid.toString()).isEqualTo("054b145c-ddbc-4136-a2bd-7bf45ed1bef7");
     }
 
     @Test
     void createUUID_invalidString() {
-        Exception e = assertThrows(BadRequestException.class, () -> StringUtil.fromString("054b145c-ddbc-4136-a2bd"));
-        assertThat(e.getMessage()).isEqualTo("invalid uuid");
+        Exception e = assertThrows(BadRequestException.class, () -> StringUtil.convertToUUID("054b145c-ddbc-4136-a2bd"));
+        assertThat(e.getMessage()).isEqualTo("invalid id");
     }
 }

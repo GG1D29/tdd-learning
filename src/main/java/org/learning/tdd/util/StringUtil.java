@@ -9,11 +9,11 @@ public class StringUtil {
         return UUID.randomUUID();
     }
 
-    public static UUID fromString(String id) {
+    public static UUID convertToUUID(String id) {
         try {
             return UUID.fromString(id);
         } catch (IllegalArgumentException e) {
-            throw new BadRequestException("invalid uuid");
+            throw new BadRequestException("invalid id");
         }
     }
 }
