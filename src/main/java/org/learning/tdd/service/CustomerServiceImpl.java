@@ -44,7 +44,7 @@ public class CustomerServiceImpl implements CustomerService {
 
 
     @Override
-    public void updateCustomer(CustomerDto dto, String customerId) {
+    public Customer updateCustomer(CustomerDto dto, String customerId) {
         UUID uuid = StringUtil.convertToUUID(customerId);
 
         Optional<Customer> customerOptional = customerRepository.findById(uuid);
@@ -52,13 +52,21 @@ public class CustomerServiceImpl implements CustomerService {
             throw new UserNotFoundException(customerId);
         }
 
-        Customer customer = new Customer(uuid, dto.getFirstName(), dto.getLastName(), dto.getEmailAddress(), dto.getPhoneNumber(), dto.getAddress());
+        Customer customer = new Customer(uuid, dto.getFirstName(), dto.getLastName(), dto.getEmailAddress(),
+                dto.getPhoneNumber(), dto.getAddress());
         customerRepository.save(customer);
+
+        return customer;
     }
 
     @Override
     public void deleteCustomer(String customerId) {
         UUID uuid = StringUtil.convertToUUID(customerId);
+        Optional<Customer> customerOptional = customerRepository.findById(uuid);
+        if (!customerOptional.isPresent()) {
+            throw new UserNotFoundException(customerId);
+        }
+
         customerRepository.deleteById(uuid);
     }
 }

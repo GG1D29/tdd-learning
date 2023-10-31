@@ -150,6 +150,8 @@ class CustomerServiceTest {
 
     @Test
     void deleteCustomer() {
+        Mockito.doReturn(getMockCustomer()).when(customerRepository).findById(any(UUID.class));
+
         customerService.deleteCustomer("054b145c-ddbc-4136-a2bd-7bf45ed1bef7");
 
         Mockito.verify(customerRepository).deleteById(uuidArgumentCaptor.capture());
@@ -162,5 +164,12 @@ class CustomerServiceTest {
     void deleteCustomer_InvalidID() {
         Exception e = assertThrows(BadRequestException.class, () -> customerService.deleteCustomer("054b145c-ddbc-4136-a2bd"));
         assertThat(e.getMessage()).isEqualTo("cannot convert string to uuid: 054b145c-ddbc-4136-a2bd");
+    }
+
+    @Test
+    void deleteCustomer_NotFound() {
+        Mockito.doReturn(Optional.empty()).when(customerRepository).findById(any(UUID.class));
+        Exception e = assertThrows(UserNotFoundException.class, () -> customerService.deleteCustomer("054b145c-ddbc-4136-a2bd-7bf45ed1bef7"));
+        assertThat(e.getMessage()).isEqualTo("user not found with id: 054b145c-ddbc-4136-a2bd-7bf45ed1bef7");
     }
 }
