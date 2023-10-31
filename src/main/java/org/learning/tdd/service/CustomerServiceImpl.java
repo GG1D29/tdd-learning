@@ -31,10 +31,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public UUID addCustomer(CustomerDto dto) {
-        Optional<Customer> customerOptional = customerRepository.findByEmailAddress(dto.getEmailAddress());
-        if (customerOptional.isPresent()) {
-            throw new DuplicateUserException(dto.getEmailAddress());
-        }
+        validateDuplicateUser(dto.getEmailAddress());
 
         Customer customer = new Customer(StringUtil.createNewID(), dto.getFirstName(), dto.getLastName(), dto.getEmailAddress(), dto.getPhoneNumber(), dto.getAddress());
         customerRepository.save(customer);
@@ -46,11 +43,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public Customer updateCustomer(CustomerDto dto, String customerId) {
         UUID uuid = StringUtil.convertToUUID(customerId);
-
-        Optional<Customer> customerOptional = customerRepository.findById(uuid);
-        if (!customerOptional.isPresent()) {
-            throw new UserNotFoundException(customerId);
-        }
+        validateExistingUser(uuid);
 
         Customer customer = new Customer(uuid, dto.getFirstName(), dto.getLastName(), dto.getEmailAddress(),
                 dto.getPhoneNumber(), dto.getAddress());
@@ -62,11 +55,22 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public void deleteCustomer(String customerId) {
         UUID uuid = StringUtil.convertToUUID(customerId);
-        Optional<Customer> customerOptional = customerRepository.findById(uuid);
-        if (!customerOptional.isPresent()) {
-            throw new UserNotFoundException(customerId);
-        }
+        validateExistingUser(uuid);
 
         customerRepository.deleteById(uuid);
+    }
+
+    private void validateExistingUser(UUID customerId) {
+        Optional<Customer> customerOptional = customerRepository.findById(customerId);
+        if (!customerOptional.isPresent()) {
+            throw new UserNotFoundException(customerId.toString());
+        }
+    }
+
+    private void validateDuplicateUser(String email) {
+        Optional<Customer> customerOptional = customerRepository.findByEmailAddress(email);
+        if (customerOptional.isPresent()) {
+            throw new DuplicateUserException(email);
+        }
     }
 }
