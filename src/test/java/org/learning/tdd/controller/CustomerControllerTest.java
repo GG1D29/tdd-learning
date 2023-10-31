@@ -30,13 +30,21 @@ class CustomerControllerTest {
 
     @Test
     void getCustomer() throws Exception {
-        mockMvc.perform(get("/customers/nibh@ultricesposuere.edu")).andExpect(status().isOk())
+        mockMvc.perform(get("/customers/9ac775c3-a1d3-4a0e-a2df-3e4ee8b3a49a")).andExpect(status().isOk())
                 .andExpect(content().string(containsString("Sydney")))
                 .andExpect(content().string(containsString("Bartlett")));
     }
 
     @Test
-    void getCustomer_NotFound() throws Exception {
-        mockMvc.perform(get("/customers/something-else")).andExpect(status().isNotFound());
+    void getCustomer_InvalidID() throws Exception {
+        mockMvc.perform(get("/customers/something-else"))
+                .andExpect(status().isBadRequest());
     }
+
+    @Test
+    void getCustomer_NotFound() throws Exception {
+        mockMvc.perform(get("/customers/9ac775c3-a1d3-4a0e-a2df-3e4ee8b3abbb"))
+                .andExpect(status().isNotFound());
+    }
+
 }
