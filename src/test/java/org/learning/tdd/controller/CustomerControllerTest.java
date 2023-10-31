@@ -1,6 +1,9 @@
 package org.learning.tdd.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
+import org.learning.tdd.dto.CustomerDto;
+import org.learning.tdd.model.Customer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -8,8 +11,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -47,4 +51,44 @@ class CustomerControllerTest {
                 .andExpect(status().isNotFound());
     }
 
+    @Test
+    void addCustomer() throws Exception {
+        CustomerDto customer = new CustomerDto("John", "Doe", "jdoe@test.com", "555-515-1234", "1234 Main St, Smallville KS 66083");
+        ObjectMapper mapper = new ObjectMapper();
+        String jsonString = mapper.writeValueAsString(customer);
+
+        this.mockMvc.perform(post("/customers").content(jsonString).contentType("application/json")).andExpect(status().isCreated())
+                .andExpect(content().string(notNullValue()));
+    }
+
+    @Test
+    void addCustomer_Duplicate() throws Exception {
+        CustomerDto customer = new CustomerDto("John", "Doe", "nibh@ultricesposuere.edu", "555-515-1234", "1234 Main St, Smallville KS 66083");
+        ObjectMapper mapper = new ObjectMapper();
+        String jsonString = mapper.writeValueAsString(customer);
+
+        this.mockMvc.perform(post("/customers").content(jsonString).contentType("application/json"))
+                .andExpect(status().isConflict());
+    }
+
+    @Test
+    void updateCustomer() throws Exception {
+        CustomerDto customer = new CustomerDto("Jack","Bower","quam.quis.diam@facilisisfacilisis.org","(831) 996-1240","2 Rockefeller Avenue, Waco, TX 76796");
+        ObjectMapper mapper = new ObjectMapper();
+        String jsonString = mapper.writeValueAsString(customer);
+        this.mockMvc.perform(put("/customers/c04ca077-8c40-4437-b77a-41f510f3f185").content(jsonString).contentType("application/json")).andExpect(status().isOk());
+    }
+
+    @Test
+    void updateCustomer_NotFound() throws Exception {
+        CustomerDto customer = new CustomerDto("Jack","Bower","quam.quis.diam@facilisisfacilisis.org","(831) 996-1240","2 Rockefeller Avenue, Waco, TX 76796");
+        ObjectMapper mapper = new ObjectMapper();
+        String jsonString = mapper.writeValueAsString(customer);
+        this.mockMvc.perform(put("/customers/c04ca077-8c40-4437-b77a-41f510f35555").content(jsonString).contentType("application/json")).andExpect(status().isNotFound());
+    }
+
+    @Test
+    void deleteCustomer() throws Exception {
+        this.mockMvc.perform(delete("/customers/3b6c3ecc-fad7-49db-a14a-f396ed866e50")).andExpect(status().isResetContent());
+    }
 }

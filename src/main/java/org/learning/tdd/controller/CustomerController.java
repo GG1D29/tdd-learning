@@ -1,15 +1,14 @@
 package org.learning.tdd.controller;
 
 import lombok.AllArgsConstructor;
+import org.learning.tdd.dto.CustomerDto;
 import org.learning.tdd.model.Customer;
 import org.learning.tdd.service.CustomerService;
-import org.learning.tdd.service.CustomerServiceImpl;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/customers")
@@ -22,8 +21,25 @@ public class CustomerController {
         return customerService.getAllCustomers();
     }
 
-    @GetMapping("/{email}")
-    public Customer getCustomer(@PathVariable("email") String email) {
-        return customerService.getCustomer(email);
+    @GetMapping("/{id}")
+    public Customer getCustomer(@PathVariable("id") String id) {
+        return customerService.getCustomer(id);
+    }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public UUID addCustomer(@RequestBody CustomerDto dto) {
+        return customerService.addCustomer(dto);
+    }
+
+    @PutMapping("/{id}")
+    public void updateCustomer(@PathVariable("id") String id, @RequestBody CustomerDto dto) {
+        customerService.updateCustomer(dto, id);
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.RESET_CONTENT)
+    public void deleteCustomer(@PathVariable("id") String id) {
+        customerService.deleteCustomer(id);
     }
 }
