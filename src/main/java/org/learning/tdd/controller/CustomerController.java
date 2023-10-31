@@ -33,8 +33,8 @@ public class CustomerController {
     }
 
     @PutMapping("/{id}")
-    public void updateCustomer(@PathVariable("id") String id, @RequestBody CustomerDto dto) {
-        customerService.updateCustomer(dto, id);
+    public Customer updateCustomer(@PathVariable("id") String id, @RequestBody CustomerDto dto) {
+        return customerService.updateCustomer(dto, id);
     }
 
     @DeleteMapping("/{id}")

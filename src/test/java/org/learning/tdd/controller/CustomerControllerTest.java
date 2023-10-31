@@ -3,7 +3,6 @@ package org.learning.tdd.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.learning.tdd.dto.CustomerDto;
-import org.learning.tdd.model.Customer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -41,14 +40,15 @@ class CustomerControllerTest {
 
     @Test
     void getCustomer_InvalidID() throws Exception {
-        mockMvc.perform(get("/customers/something-else"))
-                .andExpect(status().isBadRequest());
+        mockMvc.perform(get("/customers/something-else")).andExpect(status().isBadRequest())
+                .andExpect(content().string(containsString("cannot convert string to uuid")));
     }
 
     @Test
     void getCustomer_NotFound() throws Exception {
         mockMvc.perform(get("/customers/9ac775c3-a1d3-4a0e-a2df-3e4ee8b3abbb"))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isNotFound())
+                .andExpect(content().string(containsString("user not found")));
     }
 
     @Test
@@ -68,27 +68,57 @@ class CustomerControllerTest {
         String jsonString = mapper.writeValueAsString(customer);
 
         this.mockMvc.perform(post("/customers").content(jsonString).contentType("application/json"))
-                .andExpect(status().isConflict());
+                .andExpect(status().isConflict())
+                .andExpect(content().string(containsString("user is already exist")));
     }
 
     @Test
     void updateCustomer() throws Exception {
-        CustomerDto customer = new CustomerDto("Jack","Bower","quam.quis.diam@facilisisfacilisis.org","(831) 996-1240","2 Rockefeller Avenue, Waco, TX 76796");
+        CustomerDto customer = new CustomerDto("Jack", "Bower", "quam.quis.diam@facilisisfacilisis.org", "(831) 996-1240", "2 Rockefeller Avenue, Waco, TX 76796");
         ObjectMapper mapper = new ObjectMapper();
         String jsonString = mapper.writeValueAsString(customer);
-        this.mockMvc.perform(put("/customers/c04ca077-8c40-4437-b77a-41f510f3f185").content(jsonString).contentType("application/json")).andExpect(status().isOk());
+        this.mockMvc.perform(put("/customers/c04ca077-8c40-4437-b77a-41f510f3f185").content(jsonString).contentType("application/json")).andExpect(status().isOk())
+                .andExpect(content().string(containsString("c04ca077-8c40-4437-b77a-41f510f3f185")))
+                .andExpect(content().string(containsString("Jack")))
+                .andExpect(content().string(containsString("Bower")));
     }
 
     @Test
     void updateCustomer_NotFound() throws Exception {
-        CustomerDto customer = new CustomerDto("Jack","Bower","quam.quis.diam@facilisisfacilisis.org","(831) 996-1240","2 Rockefeller Avenue, Waco, TX 76796");
+        CustomerDto customer = new CustomerDto("Jack", "Bower", "quam.quis.diam@facilisisfacilisis.org", "(831) 996-1240", "2 Rockefeller Avenue, Waco, TX 76796");
         ObjectMapper mapper = new ObjectMapper();
         String jsonString = mapper.writeValueAsString(customer);
-        this.mockMvc.perform(put("/customers/c04ca077-8c40-4437-b77a-41f510f35555").content(jsonString).contentType("application/json")).andExpect(status().isNotFound());
+        this.mockMvc.perform(put("/customers/c04ca077-8c40-4437-b77a-41f510f35555").content(jsonString).contentType("application/json"))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string(containsString("user not found")));
+    }
+
+    @Test
+    void updateCustomer_InvalidID() throws Exception {
+        CustomerDto customer = new CustomerDto("Jack", "Bower", "quam.quis.diam@facilisisfacilisis.org", "(831) 996-1240", "2 Rockefeller Avenue, Waco, TX 76796");
+        ObjectMapper mapper = new ObjectMapper();
+        String jsonString = mapper.writeValueAsString(customer);
+        this.mockMvc.perform(put("/customers/c04ca077-8c40-4437-b77a").content(jsonString).contentType("application/json"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(containsString("cannot convert string to uuid")));
     }
 
     @Test
     void deleteCustomer() throws Exception {
         this.mockMvc.perform(delete("/customers/3b6c3ecc-fad7-49db-a14a-f396ed866e50")).andExpect(status().isResetContent());
+    }
+
+    @Test
+    void deleteCustomer_NotFound() throws Exception {
+        this.mockMvc.perform(delete("/customers/3b6c3ecc-fad7-49db-a14a-f396ed866666"))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string(containsString("user not found")));
+    }
+
+    @Test
+    void deleteCustomer_InvalidID() throws Exception {
+        this.mockMvc.perform(delete("/customers/3b6c3ecc-fad7-49db-a14a"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(containsString("cannot convert string to uuid")));
     }
 }

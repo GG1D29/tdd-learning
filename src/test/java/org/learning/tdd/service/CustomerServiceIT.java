@@ -2,6 +2,7 @@ package org.learning.tdd.service;
 
 import org.junit.jupiter.api.Test;
 import org.learning.tdd.dto.CustomerDto;
+import org.learning.tdd.exception.BadRequestException;
 import org.learning.tdd.exception.DuplicateUserException;
 import org.learning.tdd.exception.UserNotFoundException;
 import org.learning.tdd.model.Customer;
@@ -46,6 +47,12 @@ public class CustomerServiceIT {
     }
 
     @Test
+    void getCustomer_InvalidCustomerId() {
+        Exception e = assertThrows(BadRequestException.class, () -> customerService.getCustomer("123"));
+        assertThat(e.getMessage()).isEqualTo("cannot convert string to uuid: 123");
+    }
+
+    @Test
     void addCustomer() {
         CustomerDto dto = getCreateCustomerDto();
         UUID createdUserUUID = customerService.addCustomer(dto);
@@ -70,11 +77,13 @@ public class CustomerServiceIT {
     @Test
     void updateCustomer() {
         CustomerDto dto = getUpdateCustomerDto();
-        customerService.updateCustomer(dto, "9ac775c3-a1d3-4a0e-a2df-3e4ee8b3a49a");
-
-        Customer updatedCustomer = customerService.getCustomer("9ac775c3-a1d3-4a0e-a2df-3e4ee8b3a49a");
-        assertThat(updatedCustomer.getFirstName()).isEqualTo(dto.getFirstName());
-        assertThat(updatedCustomer.getFirstName()).isEqualTo(dto.getFirstName());
+        Customer actual = customerService.updateCustomer(dto, "9ac775c3-a1d3-4a0e-a2df-3e4ee8b3a49a");
+        assertThat(actual.getCustomerId()).isEqualTo(UUID.fromString("9ac775c3-a1d3-4a0e-a2df-3e4ee8b3a49a"));
+        assertThat(actual.getFirstName()).isEqualTo(dto.getFirstName());
+        assertThat(actual.getLastName()).isEqualTo(dto.getLastName());
+        assertThat(actual.getEmailAddress()).isEqualTo(dto.getEmailAddress());
+        assertThat(actual.getPhoneNumber()).isEqualTo(dto.getPhoneNumber());
+        assertThat(actual.getAddress()).isEqualTo(dto.getAddress());
     }
 
     @Test
