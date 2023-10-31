@@ -44,8 +44,7 @@ class CustomerServiceTest {
 
     @Test
     void getCustomer() {
-        Customer mockCustomer = getMockCustomer1();
-        Mockito.doReturn(Optional.of(mockCustomer)).when(customerRepository).findById(mockCustomer.getCustomerId());
+        Mockito.doReturn(getMockCustomer()).when(customerRepository).findById(any(UUID.class));
 
         Customer customer = customerService.getCustomer("054b145c-ddbc-4136-a2bd-7bf45ed1bef7");
         assertThat(customer.getFirstName()).isEqualTo("depan");
@@ -82,16 +81,6 @@ class CustomerServiceTest {
         customer.setLastName("belakang");
 
         return Optional.of(customer);
-    }
-
-    private Customer getMockCustomer1() {
-        Customer customer = new Customer();
-        UUID uuid = UUID.fromString("054b145c-ddbc-4136-a2bd-7bf45ed1bef7");
-        customer.setCustomerId(uuid);
-        customer.setFirstName("depan");
-        customer.setLastName("belakang");
-
-        return customer;
     }
 
     @Test
