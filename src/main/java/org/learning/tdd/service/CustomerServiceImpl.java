@@ -46,6 +46,12 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public void updateCustomer(CustomerDto dto, String customerId) {
         UUID uuid = StringUtil.convertToUUID(customerId);
+
+        Optional<Customer> customerOptional = customerRepository.findById(uuid);
+        if (!customerOptional.isPresent()) {
+            throw new UserNotFoundException(customerId);
+        }
+
         Customer customer = new Customer(uuid, dto.getFirstName(), dto.getLastName(), dto.getEmailAddress(), dto.getPhoneNumber(), dto.getAddress());
         customerRepository.save(customer);
     }

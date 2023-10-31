@@ -125,6 +125,8 @@ class CustomerServiceTest {
 
     @Test
     void updateCustomer() {
+        Mockito.doReturn(getMockCustomer()).when(customerRepository).findById(any(UUID.class));
+
         CustomerDto dto = getUpdateCustomerDto();
         customerService.updateCustomer(dto, "054b145c-ddbc-4136-a2bd-7bf45ed1bef7");
 
@@ -144,6 +146,13 @@ class CustomerServiceTest {
         CustomerDto dto = getUpdateCustomerDto();
         Exception e = assertThrows(BadRequestException.class, () -> customerService.updateCustomer(dto, "054b145c-ddbc-4136-a2bd"));
         assertThat(e.getMessage()).isEqualTo("cannot convert string to uuid: 054b145c-ddbc-4136-a2bd");
+    }
+
+    @Test
+    void updateCustomer_NotFound() {
+        CustomerDto dto = getUpdateCustomerDto();
+        Exception e = assertThrows(UserNotFoundException.class, () -> customerService.updateCustomer(dto, "054b145c-ddbc-4136-a2bd-7bf45ed1bef7"));
+        assertThat(e.getMessage()).isEqualTo("user not found with id: 054b145c-ddbc-4136-a2bd-7bf45ed1bef7");
     }
 
     static CustomerDto getUpdateCustomerDto() {
