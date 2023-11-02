@@ -94,8 +94,25 @@ public class CustomerServiceIT {
     }
 
     @Test
+    void updateCustomer_InvalidID() {
+        CustomerDto dto = getUpdateCustomerDto();
+        Exception e = assertThrows(BadRequestException.class, () -> customerService.updateCustomer(dto, "054b145c-ddbc-4136-a2bd"));
+        assertThat(e.getMessage()).isEqualTo("cannot convert string to uuid: 054b145c-ddbc-4136-a2bd");
+    }
+
+    @Test
     void deleteCustomer() {
         customerService.deleteCustomer("054b145c-ddbc-4136-a2bd-7bf45ed1bef7");
         assertThrows(UserNotFoundException.class, () -> customerService.getCustomer("054b145c-ddbc-4136-a2bd-7bf45ed1bef7"));
+    }
+
+    @Test
+    void deleteCustomer_NotFound() {
+        assertThrows(UserNotFoundException.class, () -> customerService.deleteCustomer("054b145c-aaaa-4136-a2bd-7bf45ed1bef7"));
+    }
+
+    @Test
+    void deleteCustomer_InvalidID() {
+        assertThrows(BadRequestException.class, () -> customerService.deleteCustomer("054b145c-ddbc-4136-a2bd"));
     }
 }
